@@ -4,6 +4,8 @@ import path from "path";
 import os from "os";
 import { randomUUID } from "crypto";
 
+const GENERIC_ERROR_MESSAGE = "Error executing code. Please check your code and try again.";
+
 function parsePhpCode(code) {
   let cleanCode = code.trim();
 
@@ -20,7 +22,7 @@ export async function executePHP(code) {
   if (!code) {
     return {
       output: "",
-      error: "No code provided"
+      error: GENERIC_ERROR_MESSAGE
     };
   }
 
@@ -53,7 +55,7 @@ export async function executePHP(code) {
 
         settleOnce({
           output: "",
-          error: "Execution timed out after 3 seconds"
+          error: GENERIC_ERROR_MESSAGE
         });
       }, 3000);
 
@@ -75,13 +77,27 @@ export async function executePHP(code) {
         ],
         { timeout: 0 },
         (err, stdout, stderr) => {
+          if (err || stderr) {
+            settleOnce({
+              output: "",
+              error: GENERIC_ERROR_MESSAGE
+            });
+
+            return;
+          }
+
           settleOnce({
             output: stdout,
-            error: stderr || err?.message || null
+            error: null
           });
         }
       );
     });
+  } catch {
+    return {
+      output: "",
+      error: GENERIC_ERROR_MESSAGE
+    };
   } finally {
     await rm(tempDir, { recursive: true, force: true });
   }
