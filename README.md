@@ -120,6 +120,29 @@ This reduces the risk of malicious or abusive code execution.
 
 ---
 
+## Docker Setup
+
+Build the sandbox image used by the backend executor:
+
+```bash
+cd docker
+docker build -t runphp-8.2:latest .
+```
+
+Optional: verify the image is available:
+
+```bash
+docker images | grep runphp-8.2
+```
+
+Optional: quick sanity check that PHP runs inside the image:
+
+```bash
+docker run --rm runphp-8.2:latest php -v
+```
+
+---
+
 ### Backend
 
 ```bash
