@@ -1,120 +1,303 @@
-.app-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: min(1100px, 100%);
-  margin: 0 auto;
-  padding: 24px 16px;
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap');
+
+/* ============================================================================
+   ROOT STYLES
+   ============================================================================ */
+
+:root {
+  --bg-primary: #0b0f14;
+  --bg-secondary: #11161c;
+  --border-color: #1f2933;
+  --text-primary: #e6edf3;
+  --text-secondary: #9aa4af;
+  --accent-primary: #2563eb;
+  --accent-danger: #dc2626;
+  --editor-bg: #0d1117;
+  --editor-border: #1f2933;
+}
+
+* {
   box-sizing: border-box;
 }
 
-.app-header {
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-.app-container h1 {
-  margin: 0 0 8px;
-  font-size: 30px;
-  font-weight: 700;
-}
-
-.app-subtitle {
+body {
   margin: 0;
-  font-size: 16px;
-  color: #888;
-  font-weight: 500;
+  padding: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
-.section-heading {
-  margin: 0 0 8px 0;
+/* ============================================================================
+   MAIN LAYOUT
+   ============================================================================ */
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: var(--bg-primary);
+}
+
+.split-layout {
+  display: grid;
+  grid-template-columns: 70% 30%;
+  width: 100%;
+  height: 100%;
+  gap: 0;
+  background: var(--bg-primary);
+}
+
+.split-layout > * {
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ============================================================================
+   EDITOR PANEL
+   ============================================================================ */
+
+.editor-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  background: var(--editor-bg);
+  border-right: 1px solid var(--editor-border);
+  overflow: hidden;
+}
+
+.editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+  height: 56px;
+}
+
+.editor-filename {
+  font-family: 'Roboto Mono', monospace;
   font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
+}
+
+.run-button {
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
   font-weight: 600;
-  color: #aaa;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.run-button:hover:not(:disabled) {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+.run-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.2);
+}
+
+.run-button:disabled {
+  background: #5f7cb8;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.editor-body {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-body > div,
+.editor-body .monaco-editor,
+.editor-body .monaco-editor .overflow-guard {
+  flex: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+/* ============================================================================
+   OUTPUT PANEL
+   ============================================================================ */
+
+.output-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+.output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+  height: 56px;
+}
+
+.output-label {
+  font-family: system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 1px;
   text-transform: uppercase;
+}
+
+.output-status {
+  font-family: system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 3px;
+  text-transform: lowercase;
   letter-spacing: 0.5px;
 }
 
-.editor-section,
-.output-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.output-status.status-idle {
+  color: var(--text-secondary);
+  background: transparent;
 }
 
-.panel {
-  border: 1px solid #2a2a2a;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #171717;
+.output-status.status-running {
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.1);
 }
 
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.output-status.status-done {
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.1);
 }
 
-.actions button {
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 18px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+.output-status.status-error {
+  color: var(--accent-danger);
+  background: rgba(220, 38, 38, 0.1);
 }
 
-.actions button:hover:not(:disabled) {
-  background: #1d4ed8;
-}
-
-.actions button:disabled {
-  background: #5f7cb8;
-  cursor: not-allowed;
-}
-
-.output-panel {
+.output-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
   padding: 16px;
-  min-height: 150px;
-  background: #111;
-  color: #fff;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--bg-secondary);
 }
 
-.output-title,
-.error-title {
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.error-title {
-  margin-top: 12px;
-  color: #ef4444;
-}
-
-.output-panel pre {
+.output-content {
   margin: 0;
+  padding: 0;
   white-space: pre-wrap;
   word-break: break-word;
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  color: var(--text-primary);
+  font-family: 'Roboto Mono', monospace;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
-.app-footer {
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid #2a2a2a;
-  text-align: center;
-  color: #666;
-  font-size: 14px;
+.output-content.error {
+  color: var(--accent-danger);
 }
 
-.app-footer p {
-  margin: 0;
+/* ============================================================================
+   SCROLLBAR STYLING
+   ============================================================================ */
+
+.editor-body::-webkit-scrollbar,
+.output-body::-webkit-scrollbar {
+  width: 10px;
 }
 
-/* Visually hidden but accessible to screen readers */
+.editor-body::-webkit-scrollbar-track,
+.output-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.editor-body::-webkit-scrollbar-thumb,
+.output-body::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 5px;
+}
+
+.editor-body::-webkit-scrollbar-thumb:hover,
+.output-body::-webkit-scrollbar-thumb:hover {
+  background: #3a4450;
+}
+
+/* ============================================================================
+   MONACO EDITOR OVERRIDES
+   ============================================================================ */
+
+.editor-body .monaco-editor {
+  background: var(--editor-bg) !important;
+}
+
+.editor-body .line-numbers {
+  color: var(--text-secondary);
+  background: var(--editor-bg) !important;
+}
+
+/* ============================================================================
+   RESPONSIVE BEHAVIOR
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+  .split-layout {
+    grid-template-columns: 65% 35%;
+  }
+}
+
+@media (max-width: 768px) {
+  .split-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  .editor-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--editor-border);
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY
+   ============================================================================ */
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -127,20 +310,27 @@
   border-width: 0;
 }
 
-@media (max-width: 768px) {
-  .app-container {
-    padding: 12px;
+/* Focus styles for keyboard navigation */
+.run-button:focus {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: more) {
+  .output-status {
+    border: 1px solid currentColor;
+    padding: 3px 7px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .run-button {
+    transition: none;
   }
 
-  .app-container h1 {
-    font-size: 24px;
-  }
-
-  .app-subtitle {
-    font-size: 14px;
-  }
-
-  .actions button {
-    width: 100%;
+  .run-button:hover:not(:disabled) {
+    transform: none;
   }
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import CodeEditor from './components/Editor'
 import Output from './components/Output'
 import './App.css'
@@ -48,7 +48,7 @@ echo json_encode($data, JSON_PRETTY_PRINT);
   const [error, setError] = useState('')
   const [isRunning, setIsRunning] = useState(false)
 
-  const runCode = async () => {
+  const runCode = useCallback(async () => {
     setOutput('')
     setError('')
     setIsRunning(true)
@@ -75,45 +75,36 @@ echo json_encode($data, JSON_PRETTY_PRINT);
     } finally {
       setIsRunning(false)
     }
-  }
+  }, [code])
+
+  // Handle Cmd/Ctrl + Enter keyboard shortcut
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault()
+        runCode()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [runCode])
 
   return (
     <main className="app-container" role="main" aria-label="PHP Code Executor Application">
-      <header className="app-header">
-        <h1>RunPHP</h1>
-        <p className="app-subtitle">Run PHP Code Online Instantly</p>
-      </header>
-
-      <section className="editor-section" aria-labelledby="editor-heading">
-        <h2 id="editor-heading" className="section-heading">PHP Code Editor</h2>
-        <div className="panel">
-          <CodeEditor code={code} setCode={setCode} />
-        </div>
-      </section>
-
-      <section className="actions" aria-labelledby="actions-heading">
-        <h2 id="actions-heading" className="visually-hidden">Actions</h2>
-        <button 
-          type="button" 
-          onClick={runCode} 
-          disabled={isRunning}
-          aria-busy={isRunning}
-          aria-label={isRunning ? 'Running PHP code' : 'Run PHP code'}
-        >
-          {isRunning ? 'Running...' : 'Run'}
-        </button>
-      </section>
-
-      <section className="output-section" aria-labelledby="output-heading">
-        <h2 id="output-heading" className="section-heading">Output</h2>
-        <div className="panel">
-          <Output output={output} error={error} />
-        </div>
-      </section>
-      
-      <footer className="app-footer" role="contentinfo">
-        <p>RunPHP • Free Online PHP Code Executor</p>
-      </footer>
+      <div className="split-layout">
+        <CodeEditor 
+          code={code} 
+          setCode={setCode} 
+          onRun={runCode}
+          isRunning={isRunning}
+        />
+        <Output 
+          output={output} 
+          error={error}
+          isRunning={isRunning}
+        />
+      </div>
     </main>
   )
 }
