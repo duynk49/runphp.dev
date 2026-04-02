@@ -8,10 +8,38 @@
   box-sizing: border-box;
 }
 
+.app-header {
+  margin-bottom: 12px;
+  text-align: center;
+}
+
 .app-container h1 {
   margin: 0 0 8px;
   font-size: 30px;
   font-weight: 700;
+}
+
+.app-subtitle {
+  margin: 0;
+  font-size: 16px;
+  color: #888;
+  font-weight: 500;
+}
+
+.section-heading {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.editor-section,
+.output-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .panel {
@@ -24,6 +52,7 @@
 .actions {
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 
 .actions button {
@@ -35,6 +64,11 @@
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.actions button:hover:not(:disabled) {
+  background: #1d4ed8;
 }
 
 .actions button:disabled {
@@ -67,13 +101,45 @@
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 }
 
+.app-footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #2a2a2a;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+.app-footer p {
+  margin: 0;
+}
+
+/* Visually hidden but accessible to screen readers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 @media (max-width: 768px) {
   .app-container {
     padding: 12px;
   }
+
   .app-container h1 {
     font-size: 24px;
   }
+
+  .app-subtitle {
+    font-size: 14px;
+  }
+
   .actions button {
     width: 100%;
   }

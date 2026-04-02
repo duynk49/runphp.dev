@@ -1,0 +1,13 @@
+# robots.txt for RunPHP
+# Allow all search engine bots to crawl the site
+
+User-agent: *
+Allow: /
+
+# Specific rules for better crawling
+Sitemap: https://runphp.dev/sitemap.xml
+
+# Disallow crawling of common debug paths if they exist
+Disallow: /.git
+Disallow: /node_modules
+Disallow: /*.map
