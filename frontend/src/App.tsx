@@ -6,7 +6,33 @@ import './App.css'
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
 
 function App() {
-  const [code, setCode] = useState('<?php echo 1+1;')
+  const [code, setCode] = useState(`<?php
+
+// Simple math
+echo "1 + 1 = " . (1 + 1) . "\n";
+
+// Function example
+function greet($name) {
+    return "Hello, $name!";
+}
+
+echo greet("runphp.dev") . "\n";
+
+// Array + loop
+$items = ["PHP", "Fastify", "React"];
+
+foreach ($items as $item) {
+    echo "- $item\n";
+}
+
+// JSON output (useful for your API)
+$data = [
+    "status" => "ok",
+    "time" => date("c"),
+];
+
+echo json_encode($data, JSON_PRETTY_PRINT);
+`)
   const [output, setOutput] = useState('')
   const [error, setError] = useState('')
   const [isRunning, setIsRunning] = useState(false)
