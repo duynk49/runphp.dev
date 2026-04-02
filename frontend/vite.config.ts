@@ -8,8 +8,13 @@ export default defineConfig({
     // Optimize bundle for better Core Web Vitals
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react')) {
+              return 'react-vendor'
+            }
+            return 'vendor'
+          }
         },
       },
     },
