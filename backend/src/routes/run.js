@@ -1,7 +1,7 @@
 import { executePHP } from "../services/executor.js";
 
 export default async function (app) {
-  app.post("/run", async (req, reply) => {
+  app.post("/api/run", async (req, reply) => {
     const { code } = req.body;
 
     if (!code) {
