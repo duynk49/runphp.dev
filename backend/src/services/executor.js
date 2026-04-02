@@ -27,16 +27,43 @@ export async function executePHP(code) {
   const cleanCode = parsePhpCode(code);
   const tempDir = await mkdtemp(path.join(os.tmpdir(), "runphp-"));
   const codePath = path.join(tempDir, `code-${randomUUID()}.php`);
+  const containerName = `runphp-${randomUUID()}`;
 
   try {
     await writeFile(codePath, `<?php\n${cleanCode}\n`, "utf8");
 
     return await new Promise((resolve) => {
-      execFile(
+      let isSettled = false;
+
+      const settleOnce = (result) => {
+        if (isSettled) {
+          return;
+        }
+
+        isSettled = true;
+        clearTimeout(timeoutId);
+        resolve(result);
+      };
+
+      const timeoutId = setTimeout(() => {
+        dockerRunProcess.kill("SIGKILL");
+        execFile("docker", ["kill", containerName], () => {
+          // Ignore kill errors: container may have already exited.
+        });
+
+        settleOnce({
+          output: "",
+          error: "Execution timed out after 3 seconds"
+        });
+      }, 3000);
+
+      const dockerRunProcess = execFile(
         "docker",
         [
           "run",
           "--rm",
+          "--name",
+          containerName,
           "--memory=128m",
           "--cpus=0.5",
           "--network=none",
@@ -46,9 +73,9 @@ export async function executePHP(code) {
           `${codePath}:/sandbox/code.php:ro`,
           "runphp-8.2"
         ],
-        { timeout: 2000 },
+        { timeout: 0 },
         (err, stdout, stderr) => {
-          resolve({
+          settleOnce({
             output: stdout,
             error: stderr || err?.message || null
           });
